@@ -7,7 +7,6 @@
 #include "Components/CapsuleComponent.h"
 #include "EnhancedInputComponent.h"
 #include "EnhancedInputSubsystems.h"
-#include "UTP_GravityComponent.h"
 
 //////////////////////////////////////////////////////////////////////////
 // AShooterGameTestCharacter
