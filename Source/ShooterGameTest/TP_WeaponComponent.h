@@ -14,6 +14,7 @@ class SHOOTERGAMETEST_API UTP_WeaponComponent : public USkeletalMeshComponent
 	GENERATED_BODY()
 
 public:
+
 	/** Projectile class to spawn */
 	UPROPERTY(EditDefaultsOnly, Category=Projectile)
 	TSubclassOf<class AShooterGameTestProjectile> ProjectileClass;
