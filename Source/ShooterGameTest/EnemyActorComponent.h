@@ -19,11 +19,5 @@ public:
 
 protected:
 	// Called when the game starts
-	virtual void BeginPlay() override;
-
-	virtual UAbilitySystemComponent* GetAbilitySystemComponent() const override;
-
-public:	
-
-		
+	virtual void BeginPlay() override;		
 };

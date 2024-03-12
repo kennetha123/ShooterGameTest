@@ -3,7 +3,7 @@
 
 #include "Projectile.h"
 #include "ShooterGameTestCharacterBase.h"
-#include "Abilities/CharacterAbilitySystemComponent.h"
+#include "Abilities/AttributeComponent.h"
 
 // Sets default values
 AProjectile::AProjectile()
@@ -39,14 +39,11 @@ void AProjectile::OnOverlapBegin(UPrimitiveComponent* OverlappedComponent, AActo
 		AShooterGameTestCharacterBase* Character = Cast<AShooterGameTestCharacterBase>(OtherActor);
 		if (Character)
 		{
-			float NewHealth = Character->GetHealth() - 50.0f;
-			Character->SetHealth(FMath::Max(NewHealth, 0.0f));
-			UE_LOG(LogTemp, Log, TEXT("%s Health : %f"), *OtherActor->GetActorNameOrLabel(), Character->GetHealth());
-			if (!Character->IsAlive())
-			{
-				Character->Die();
-			}
+			Character->AttributeComponent->ApplyDamage(OtherActor, 50.0f);
 		}
+
+		UE_LOG(LogTemp, Log, TEXT("%s Health : %f"), *OtherActor->GetActorNameOrLabel(), Character->GetHealth());
+		
 	}
 }
 

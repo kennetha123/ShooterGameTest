@@ -2,12 +2,10 @@
 
 
 #include "EnemyActorComponent.h"
-#include "Abilities/CharacterAbilitySystemComponent.h"
 
 // Sets default values for this component's properties
 AEnemyActorComponent::AEnemyActorComponent()
 {
-	AbilitySystemComponent = CreateDefaultSubobject<UCharacterAbilitySystemComponent>(TEXT("AbilitySystemComponent"));
 	Tags.Add("Enemy");
 }
 
@@ -16,15 +14,10 @@ void AEnemyActorComponent::BeginPlay()
 {
 	Super::BeginPlay();
 
-	if (AttributeSetBase == nullptr)
+	if (AttributeComponent == nullptr)
 	{
-		AttributeSetBase = NewObject<UCharacterAttributeSetBase>(this, TEXT("AttributeSet"));
+		AttributeComponent = NewObject<UAttributeComponent>(this, TEXT("AttributeSet"));
 	}
 
 	SetHealth(120.f);
-}
-
-UAbilitySystemComponent* AEnemyActorComponent::GetAbilitySystemComponent() const
-{
-	return AbilitySystemComponent.Get();
 }

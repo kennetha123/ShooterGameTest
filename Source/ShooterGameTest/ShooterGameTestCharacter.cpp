@@ -7,6 +7,7 @@
 #include "Components/CapsuleComponent.h"
 #include "EnhancedInputComponent.h"
 #include "EnhancedInputSubsystems.h"
+#include "Abilities/SkillActionComponent.h"
 
 //////////////////////////////////////////////////////////////////////////
 // AShooterGameTestCharacter
@@ -49,11 +50,18 @@ void AShooterGameTestCharacter::BeginPlay()
 		}
 	}
 
-	if (AttributeSetBase == nullptr)
+	if (AttributeComponent == nullptr)
 	{
-		AttributeSetBase = NewObject<UCharacterAttributeSetBase>(this, TEXT("AttributeSet"));
+		AttributeComponent = NewObject<UAttributeComponent>(this, TEXT("AttributeSet"));
 	}
+
 	SetHealth(100.f);
+
+	FSkillData DashSkillData;
+	DashSkillData.Name = "Dash";
+	DashSkillData.Cooldown = 5.0f;  // Assuming a 5-second cooldown
+	DashSkillData.SkillActions = NewObject<UDashComponent>(this); // Set the class, not an instance
+	AvailableSkills.Add(DashSkillData);
 }
 
 //////////////////////////////////////////////////////////////////////////// Input
@@ -64,14 +72,17 @@ void AShooterGameTestCharacter::SetupPlayerInputComponent(class UInputComponent*
 	if (UEnhancedInputComponent* EnhancedInputComponent = CastChecked<UEnhancedInputComponent>(PlayerInputComponent))
 	{
 		//Jumping
-		EnhancedInputComponent->BindAction(JumpAction, ETriggerEvent::Triggered, this, &ACharacter::Jump);
-		EnhancedInputComponent->BindAction(JumpAction, ETriggerEvent::Completed, this, &ACharacter::StopJumping);
+		//EnhancedInputComponent->BindAction(JumpAction, ETriggerEvent::Triggered, this, &ACharacter::Jump);
+		//EnhancedInputComponent->BindAction(JumpAction, ETriggerEvent::Completed, this, &ACharacter::StopJumping);
 
 		//Moving
 		EnhancedInputComponent->BindAction(MoveAction, ETriggerEvent::Triggered, this, &AShooterGameTestCharacter::Move);
 
 		//Looking
 		EnhancedInputComponent->BindAction(LookAction, ETriggerEvent::Triggered, this, &AShooterGameTestCharacter::Look);
+
+		//Dash
+		EnhancedInputComponent->BindAction(DashAction, ETriggerEvent::Triggered, this, &AShooterGameTestCharacter::TriggerDash);
 	}
 }
 
@@ -102,8 +113,14 @@ void AShooterGameTestCharacter::Look(const FInputActionValue& Value)
 	}
 }
 
+void AShooterGameTestCharacter::TriggerDash()
+{
+	AvailableSkills[0].SkillActions->ExecuteSkill(this);
+}
+
 void AShooterGameTestCharacter::SetHasRifle(bool bNewHasRifle)
 {
+
 	bHasRifle = bNewHasRifle;
 }
 
