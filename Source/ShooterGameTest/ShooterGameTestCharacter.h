@@ -5,6 +5,7 @@
 #include "CoreMinimal.h"
 #include "GameFramework/Character.h"
 #include "InputActionValue.h"
+#include "ShooterGameTestCharacterBase.h"
 #include "ShooterGameTestCharacter.generated.h"
 
 class UInputComponent;
@@ -15,7 +16,7 @@ class UAnimMontage;
 class USoundBase;
 
 UCLASS(config=Game)
-class AShooterGameTestCharacter : public ACharacter
+class AShooterGameTestCharacter : public AShooterGameTestCharacterBase
 {
 	GENERATED_BODY()
 

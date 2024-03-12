@@ -30,7 +30,7 @@ public:
 	float HoldDistance = 200;
 
 	UPROPERTY(EditAnywhere)
-	float LaunchForce = 200;
+	float LaunchForce = 3000;
 
 	/** MappingContext */
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Input, meta = (AllowPrivateAccess = "true"))
