@@ -63,4 +63,7 @@ public:
 
     // Deactivates the smoke effect
     void DeactivateSmoke();
+
+    UPROPERTY()
+    UParticleSystemComponent* ActiveSmokeParticleSystem;
 };

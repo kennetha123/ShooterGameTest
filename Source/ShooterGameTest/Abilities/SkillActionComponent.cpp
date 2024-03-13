@@ -96,16 +96,20 @@ void USmokeComponent::ExecuteSkill(AShooterGameTestCharacterBase* Character)
         FVector SpawnLocation = Character->GetActorLocation();
         FRotator SpawnRotation = Character->GetActorRotation();
 
-        UGameplayStatics::SpawnEmitterAtLocation(World, SmokeSkillData->SkillParticleSystem, SpawnLocation, SpawnRotation);
+        ActiveSmokeParticleSystem = UGameplayStatics::SpawnEmitterAtLocation(World, SmokeSkillData->SkillParticleSystem, SpawnLocation, SpawnRotation);
     }
 
     FTimerHandle ExpiryTimer;
-    GetWorld()->GetTimerManager().SetTimer(ExpiryTimer, this, &USmokeComponent::DeactivateSmoke, SmokeSkillData->Cooldown, false);
+    GetWorld()->GetTimerManager().SetTimer(ExpiryTimer, this, &USmokeComponent::DeactivateSmoke, SmokeDuration, false);
 
     StartCooldownTimer(SmokeSkillData->Cooldown);
 }
 
 void USmokeComponent::DeactivateSmoke()
 {
-
+    if(ActiveSmokeParticleSystem)
+    {
+        ActiveSmokeParticleSystem->Deactivate();
+        ActiveSmokeParticleSystem = nullptr;
+    }
 }
