@@ -7,6 +7,7 @@
 #include "Abilities/AbilityEnums.h"
 #include "Abilities/AttributeComponent.h"
 #include "Abilities/SkillData.h"
+#include "Abilities/SkillActionComponent.h"
 #include "ShooterGameTestCharacterBase.generated.h"
 
 UCLASS()
@@ -15,7 +16,6 @@ class SHOOTERGAMETEST_API AShooterGameTestCharacterBase : public ACharacter
 	GENERATED_BODY()
 
 public:
-	// Sets default values for this character's properties
 	AShooterGameTestCharacterBase();
 
 	UFUNCTION(BlueprintCallable, Category = "Character|Attributes")
@@ -27,6 +27,10 @@ public:
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Skills")
 	TArray<FSkillData> AvailableSkills;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Skills")
+	TMap<FString, UGameSkillData*> SkillDataMap;
+
 protected:
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
@@ -38,8 +42,7 @@ protected:
 	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category = "Animation")
 	UAnimMontage* DeathMontage;
 
-	virtual void SetMaxHealth(float MaxHealth);
-
 private:
+	UFUNCTION()
 	void OnCharacterDeath();
 };

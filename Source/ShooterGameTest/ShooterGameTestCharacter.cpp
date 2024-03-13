@@ -7,13 +7,17 @@
 #include "Components/CapsuleComponent.h"
 #include "EnhancedInputComponent.h"
 #include "EnhancedInputSubsystems.h"
-#include "Abilities/SkillActionComponent.h"
 
 //////////////////////////////////////////////////////////////////////////
 // AShooterGameTestCharacter
 
 AShooterGameTestCharacter::AShooterGameTestCharacter()
 {
+	if (AttributeComponent == nullptr)
+	{
+		AttributeComponent = NewObject<UAttributeComponent>(this, TEXT("AttributeSet"));
+	}
+
 	// Character doesnt have a rifle at start
 	bHasRifle = false;
 	
@@ -50,18 +54,21 @@ void AShooterGameTestCharacter::BeginPlay()
 		}
 	}
 
-	if (AttributeComponent == nullptr)
-	{
-		AttributeComponent = NewObject<UAttributeComponent>(this, TEXT("AttributeSet"));
-	}
 
 	SetHealth(100.f);
 
 	FSkillData DashSkillData;
 	DashSkillData.Name = "Dash";
-	DashSkillData.Cooldown = 5.0f;  // Assuming a 5-second cooldown
-	DashSkillData.SkillActions = NewObject<UDashComponent>(this); // Set the class, not an instance
+	DashSkillData.Cooldown = 5.0f;
+	DashSkillData.SkillActions = NewObject<UDashComponent>(this);
+
+	FSkillData SmokeSkillData;
+	SmokeSkillData.Name = "Smoke";
+	SmokeSkillData.Cooldown = 5.0f;
+	SmokeSkillData.SkillActions = NewObject<USmokeComponent>(this);
+
 	AvailableSkills.Add(DashSkillData);
+	AvailableSkills.Add(SmokeSkillData);
 }
 
 //////////////////////////////////////////////////////////////////////////// Input
@@ -71,10 +78,6 @@ void AShooterGameTestCharacter::SetupPlayerInputComponent(class UInputComponent*
 	// Set up action bindings
 	if (UEnhancedInputComponent* EnhancedInputComponent = CastChecked<UEnhancedInputComponent>(PlayerInputComponent))
 	{
-		//Jumping
-		//EnhancedInputComponent->BindAction(JumpAction, ETriggerEvent::Triggered, this, &ACharacter::Jump);
-		//EnhancedInputComponent->BindAction(JumpAction, ETriggerEvent::Completed, this, &ACharacter::StopJumping);
-
 		//Moving
 		EnhancedInputComponent->BindAction(MoveAction, ETriggerEvent::Triggered, this, &AShooterGameTestCharacter::Move);
 
@@ -83,6 +86,9 @@ void AShooterGameTestCharacter::SetupPlayerInputComponent(class UInputComponent*
 
 		//Dash
 		EnhancedInputComponent->BindAction(DashAction, ETriggerEvent::Triggered, this, &AShooterGameTestCharacter::TriggerDash);
+
+		//Smoke
+		EnhancedInputComponent->BindAction(SmokeAction, ETriggerEvent::Triggered, this, &AShooterGameTestCharacter::TriggerSmoke);
 	}
 }
 
@@ -118,9 +124,13 @@ void AShooterGameTestCharacter::TriggerDash()
 	AvailableSkills[0].SkillActions->ExecuteSkill(this);
 }
 
+void AShooterGameTestCharacter::TriggerSmoke()
+{
+	AvailableSkills[1].SkillActions->ExecuteSkill(this);
+}
+
 void AShooterGameTestCharacter::SetHasRifle(bool bNewHasRifle)
 {
-
 	bHasRifle = bNewHasRifle;
 }
 

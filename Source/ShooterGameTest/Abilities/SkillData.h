@@ -24,3 +24,12 @@ struct FSkillData
     UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Skill")
     TWeakObjectPtr<USkillActionComponent> SkillActions;
 };
+
+UCLASS()
+class SHOOTERGAMETEST_API USkillItems : public UDataAsset
+{
+    GENERATED_BODY()
+
+    UPROPERTY(EditAnywhere)
+    TArray<FSkillData> SkillItems;
+};

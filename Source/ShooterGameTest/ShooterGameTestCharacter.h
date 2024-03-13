@@ -43,6 +43,9 @@ class AShooterGameTestCharacter : public AShooterGameTestCharacterBase
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Input, meta = (AllowPrivateAccess = "true"))
 	class UInputAction* DashAction;
 
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Input, meta = (AllowPrivateAccess = "true"))
+	class UInputAction* SmokeAction;
+
 public:
 	AShooterGameTestCharacter();
 
@@ -66,6 +69,7 @@ public:
 	/** Getter for the bool */
 	UFUNCTION(BlueprintCallable, Category = Weapon)
 	bool GetHasRifle();
+
 protected:
 	/** Called for movement input */
 	void Move(const FInputActionValue& Value);
@@ -74,6 +78,8 @@ protected:
 	void Look(const FInputActionValue& Value);
 
 	void TriggerDash();
+
+	void TriggerSmoke();
 protected:
 	// APawn interface
 	virtual void SetupPlayerInputComponent(UInputComponent* InputComponent) override;

@@ -24,13 +24,9 @@ float AShooterGameTestCharacterBase::GetHealth() const
 void AShooterGameTestCharacterBase::BeginPlay()
 {
 	Super::BeginPlay();
-}
 
-void AShooterGameTestCharacterBase::SetMaxHealth(float MaxHealth)
-{
-	if (AttributeComponent.IsValid())
+	if (AttributeComponent.IsValid() && !AttributeComponent->OnDeath.IsBound())
 	{
-		AttributeComponent->Health.SetBaseValue(MaxHealth);
 		AttributeComponent->OnDeath.AddDynamic(this, &AShooterGameTestCharacterBase::OnCharacterDeath);
 	}
 }
@@ -51,8 +47,12 @@ void AShooterGameTestCharacterBase::OnCharacterDeath()
 
 void AShooterGameTestCharacterBase::SetHealth(float Health)
 {
-	if (AttributeComponent.IsValid())
+	if (!AttributeComponent.IsValid())
 	{
-		AttributeComponent->Health.SetCurrentValue(Health);
+		return;
 	}
+
+	AttributeComponent->Health.SetCurrentValue(Health);
+
+
 }

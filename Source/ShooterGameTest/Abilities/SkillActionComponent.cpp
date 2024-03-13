@@ -4,6 +4,8 @@
 #include "GameFramework/Character.h"
 #include "GameFramework/CharacterMovementComponent.h"
 #include "ShooterGameTest/ShooterGameTestCharacterBase.h"
+#include <Kismet/GameplayStatics.h>
+#include "Particles/ParticleSystemComponent.h"
 
 USkillActionComponent::USkillActionComponent()
 {
@@ -18,15 +20,12 @@ void USkillActionComponent::StartCooldownTimer()
 {
     bIsOnCooldown = true;
 
-    GetWorld()->GetTimerManager().SetTimer(CooldownTimer, [&]() 
+    FTimerHandle CooldownTimer;
+    GetWorld()->GetTimerManager().SetTimer(CooldownTimer, [&]()
         {
            bIsOnCooldown = false;
         }, 
         Cooldown, false);
-}
-
-UDashComponent::UDashComponent()
-{
 }
 
 void UDashComponent::ExecuteSkill(AShooterGameTestCharacterBase* Character)
@@ -44,7 +43,36 @@ void UDashComponent::ExecuteSkill(AShooterGameTestCharacterBase* Character)
     StartCooldownTimer();
 }
 
-void UDashComponent::StartCooldownTimer()
+void USmokeComponent::ExecuteSkill(AShooterGameTestCharacterBase* Character)
 {
-    Super::StartCooldownTimer();
+    Super::ExecuteSkill(Character);
+
+    if (!Character) 
+    { 
+        return; 
+    }
+
+    SkillData = Character->SkillDataMap["Smoke"];
+
+
+
+    UWorld* World = GetWorld();
+    if (World && SkillData->SkillParticleSystem)
+    {
+        UE_LOG(LogTemp, Log, TEXT("Smoke Executed"));
+
+        FVector ForwardVector = Character->GetActorForwardVector();
+        FVector SpawnLocation = Character->GetActorLocation();
+        FRotator SpawnRotation = Character->GetActorRotation();
+
+        UGameplayStatics::SpawnEmitterAtLocation(World, SkillData->SkillParticleSystem, SpawnLocation, SpawnRotation);
+    }
+
+    FTimerHandle ExpiryTimer;
+    GetWorld()->GetTimerManager().SetTimer(ExpiryTimer, this, &USmokeComponent::DeactivateSmoke, SmokeDuration, false);
+}
+
+void USmokeComponent::DeactivateSmoke()
+{
+
 }

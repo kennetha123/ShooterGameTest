@@ -6,6 +6,16 @@
 
 class AShooterGameTestCharacterBase;
 
+UCLASS(Blueprintable)
+class UGameSkillData : public UDataAsset
+{
+	GENERATED_BODY()
+
+public:
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Skill")
+	UParticleSystem* SkillParticleSystem;
+};
+
 UCLASS( ClassGroup=(Custom), meta=(BlueprintSpawnableComponent) )
 class SHOOTERGAMETEST_API USkillActionComponent : public UActorComponent
 {
@@ -19,14 +29,13 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Skill")
 	float Cooldown = 2.0f;
 
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Skill")
+	UGameSkillData* SkillData;
 
 protected:
 	virtual void StartCooldownTimer();
 
 	bool bIsOnCooldown = false;
-
-	FTimerHandle CooldownTimer;
-private:
 
 };
 
@@ -36,14 +45,24 @@ class UDashComponent : public USkillActionComponent
 	GENERATED_BODY()
 
 public:
-	UDashComponent();
-
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Dash")
 	float DashSpeed = 2000.0f; 
 
 
 	virtual void ExecuteSkill(AShooterGameTestCharacterBase* Character) override;
+};
 
-	virtual void StartCooldownTimer() override;
+class UParticleSystemComponent;
 
+UCLASS()
+class USmokeComponent : public USkillActionComponent
+{
+	GENERATED_BODY()
+
+public:
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Smoke")
+	float SmokeDuration = 5.0f;
+
+	virtual void ExecuteSkill(AShooterGameTestCharacterBase* Character) override;
+	void DeactivateSmoke();
 };
