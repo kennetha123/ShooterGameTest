@@ -13,11 +13,6 @@
 
 AShooterGameTestCharacter::AShooterGameTestCharacter()
 {
-	if (AttributeComponent == nullptr)
-	{
-		AttributeComponent = NewObject<UAttributeComponent>(this, TEXT("AttributeSet"));
-	}
-
 	// Character doesnt have a rifle at start
 	bHasRifle = false;
 	
@@ -38,6 +33,16 @@ AShooterGameTestCharacter::AShooterGameTestCharacter()
 	Mesh1P->CastShadow = false;
 	//Mesh1P->SetRelativeRotation(FRotator(0.9f, -19.19f, 5.2f));
 	Mesh1P->SetRelativeLocation(FVector(-30.f, 0.f, -150.f));
+}
+
+void AShooterGameTestCharacter::PostInitializeComponents()
+{
+	Super::PostInitializeComponents();
+
+	if (AttributeComponent == nullptr)
+	{
+		AttributeComponent = NewObject<UAttributeComponent>(this, TEXT("AttributeSet"));
+	}
 }
 
 void AShooterGameTestCharacter::BeginPlay()

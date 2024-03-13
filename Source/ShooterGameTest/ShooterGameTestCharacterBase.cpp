@@ -83,3 +83,4 @@ USkillActionComponent* AShooterGameTestCharacterBase::GetOrCreateSkillComponent(
 		return NewSkill;
 	}
 }
+

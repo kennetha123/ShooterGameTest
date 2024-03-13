@@ -28,7 +28,7 @@ public:
 	TMap<FString, TWeakObjectPtr<USkillActionComponent>> AvailableSkills;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Skills")
-	TMap<FString, USkillDataAsset*> SkillsData;
+	USkillDataAsset* SkillsData;
 
 protected:
 	virtual void BeginPlay() override;
@@ -40,7 +40,6 @@ protected:
 	UAnimMontage* DeathMontage;
 
 	USkillActionComponent* GetOrCreateSkillComponent(const FString& SkillName);
-
 private:
 	UFUNCTION()
 	void OnCharacterDeath();

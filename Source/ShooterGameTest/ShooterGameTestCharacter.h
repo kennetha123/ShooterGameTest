@@ -50,6 +50,8 @@ public:
 	AShooterGameTestCharacter();
 
 protected:
+	virtual void PostInitializeComponents() override;
+
 	virtual void BeginPlay();
 
 public:

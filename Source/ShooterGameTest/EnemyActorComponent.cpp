@@ -6,11 +6,6 @@
 // Sets default values for this component's properties
 AEnemyActorComponent::AEnemyActorComponent()
 {
-	if (AttributeComponent == nullptr)
-	{
-		AttributeComponent = NewObject<UAttributeComponent>(this, TEXT("AttributeSet"));
-	}
-
 	Tags.Add("Enemy");
 }
 
@@ -20,4 +15,14 @@ void AEnemyActorComponent::BeginPlay()
 	Super::BeginPlay();
 
 	SetHealth(120.f);
+}
+
+void AEnemyActorComponent::PostInitializeComponents()
+{
+	Super::PostInitializeComponents();
+
+	if (AttributeComponent == nullptr)
+	{
+		AttributeComponent = NewObject<UAttributeComponent>(this, TEXT("AttributeSet"));
+	}
 }

@@ -16,7 +16,7 @@ void USkillActionComponent::ExecuteSkill(AShooterGameTestCharacterBase* Characte
 {
 }
 
-void USkillActionComponent::StartCooldownTimer()
+void USkillActionComponent::StartCooldownTimer(float Cooldown)
 {
     bIsOnCooldown = true;
 
@@ -32,28 +32,43 @@ void UDashComponent::ExecuteSkill(AShooterGameTestCharacterBase* Character)
 {
     Super::ExecuteSkill(Character);
 
-    UE_LOG(LogTemp, Log, TEXT("Dash Executed"));
     if (!Character || bIsOnCooldown)
     {
+        UE_LOG(LogTemp, Warning, TEXT("Character or Dash skill data not found."));
         return;
     }
 
+    SkillDataAsset = Character->SkillsData;
+
+    if (!SkillDataAsset)
+    {
+        UE_LOG(LogTemp, Warning, TEXT("Dash skill data asset is null."));
+        return;
+    }
+
+    const FSkillData* DashSkillData = SkillDataAsset->SkillsData.FindByPredicate(
+        [](const FSkillData& Data)
+        {
+            return Data.Name.Equals("Dash");
+        }
+    );
+
     Character->LaunchCharacter(Character->GetActorForwardVector() * DashSpeed, false, true);
 
-    StartCooldownTimer();
+    StartCooldownTimer(DashSkillData->Cooldown);
 }
 
 void USmokeComponent::ExecuteSkill(AShooterGameTestCharacterBase* Character)
 {
     Super::ExecuteSkill(Character);
 
-    if (!Character || !Character->SkillsData.Contains("Smoke"))
+    if (!Character || bIsOnCooldown)
     {
         UE_LOG(LogTemp, Warning, TEXT("Character or Smoke skill data not found."));
         return;
     }
 
-    SkillDataAsset = Character->SkillsData["Smoke"];
+    SkillDataAsset = Character->SkillsData;
 
     if (!SkillDataAsset)
     {
@@ -77,8 +92,6 @@ void USmokeComponent::ExecuteSkill(AShooterGameTestCharacterBase* Character)
     UWorld* World = GetWorld();
     if (World)
     {
-        UE_LOG(LogTemp, Log, TEXT("Smoke Executed"));
-
         FVector ForwardVector = Character->GetActorForwardVector();
         FVector SpawnLocation = Character->GetActorLocation();
         FRotator SpawnRotation = Character->GetActorRotation();
@@ -89,7 +102,7 @@ void USmokeComponent::ExecuteSkill(AShooterGameTestCharacterBase* Character)
     FTimerHandle ExpiryTimer;
     GetWorld()->GetTimerManager().SetTimer(ExpiryTimer, this, &USmokeComponent::DeactivateSmoke, SmokeSkillData->Cooldown, false);
 
-    StartCooldownTimer();
+    StartCooldownTimer(SmokeSkillData->Cooldown);
 }
 
 void USmokeComponent::DeactivateSmoke()

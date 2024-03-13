@@ -5,55 +5,62 @@
 #include "SkillData.h"
 #include "SkillActionComponent.generated.h"
 
+// Forward declaration
 class AShooterGameTestCharacterBase;
 
-UCLASS( ClassGroup=(Custom), meta=(BlueprintSpawnableComponent) )
+// Base class for skill action components
+UCLASS(ClassGroup = (Custom), meta = (BlueprintSpawnableComponent))
 class SHOOTERGAMETEST_API USkillActionComponent : public UActorComponent
 {
-	GENERATED_BODY()
+    GENERATED_BODY()
 
-public:	
-	USkillActionComponent();
+public:
+    USkillActionComponent();
 
-	virtual void ExecuteSkill(AShooterGameTestCharacterBase* Character);
+    // Function to execute a skill
+    virtual void ExecuteSkill(AShooterGameTestCharacterBase* Character);
 
-	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Skill")
-	float Cooldown = 2.0f;
-
-	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Skill")
-	USkillDataAsset* SkillDataAsset;
+    // Skill data asset reference
+    UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Skill")
+    USkillDataAsset* SkillDataAsset;
 
 protected:
-	virtual void StartCooldownTimer();
+    // Starts the cooldown timer
+    virtual void StartCooldownTimer(float Cooldown);
 
-	bool bIsOnCooldown = false;
-
+    // Indicates whether the skill is on cooldown
+    bool bIsOnCooldown = false;
 };
 
+// Component for dash skill actions
 UCLASS()
 class UDashComponent : public USkillActionComponent
 {
-	GENERATED_BODY()
+    GENERATED_BODY()
 
 public:
-	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Dash")
-	float DashSpeed = 2000.0f; 
+    // Speed of the dash
+    UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Dash")
+    float DashSpeed = 2000.0f;
 
-
-	virtual void ExecuteSkill(AShooterGameTestCharacterBase* Character) override;
+    // Executes the dash skill
+    virtual void ExecuteSkill(AShooterGameTestCharacterBase* Character) override;
 };
 
-class UParticleSystemComponent;
-
+// Component for smoke skill actions
 UCLASS()
 class USmokeComponent : public USkillActionComponent
 {
-	GENERATED_BODY()
+    GENERATED_BODY()
 
 public:
-	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Smoke")
-	float SmokeDuration = 5.0f;
+    // Duration of the smoke effect
+    UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Smoke")
+    float SmokeDuration = 5.0f;
 
-	virtual void ExecuteSkill(AShooterGameTestCharacterBase* Character) override;
-	void DeactivateSmoke();
+    // Executes the smoke skill
+    virtual void ExecuteSkill(AShooterGameTestCharacterBase* Character) override;
+
+    // Deactivates the smoke effect
+    void DeactivateSmoke();
 };
