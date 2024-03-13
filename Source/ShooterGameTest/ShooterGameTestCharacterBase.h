@@ -25,16 +25,13 @@ public:
 
 	TWeakObjectPtr<class UAttributeComponent> AttributeComponent;
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Skills")
-	TArray<FSkillData> AvailableSkills;
+	TMap<FString, TWeakObjectPtr<USkillActionComponent>> AvailableSkills;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Skills")
-	TMap<FString, UGameSkillData*> SkillDataMap;
+	TMap<FString, USkillDataAsset*> SkillsData;
 
 protected:
-	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
-
 
 	UPROPERTY(BlueprintReadOnly, EditAnywhere, Category = "Character")
 	FText CharacterName;
@@ -42,7 +39,10 @@ protected:
 	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category = "Animation")
 	UAnimMontage* DeathMontage;
 
+	USkillActionComponent* GetOrCreateSkillComponent(const FString& SkillName);
+
 private:
 	UFUNCTION()
 	void OnCharacterDeath();
+
 };

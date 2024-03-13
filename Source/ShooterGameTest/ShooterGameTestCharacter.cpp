@@ -54,21 +54,7 @@ void AShooterGameTestCharacter::BeginPlay()
 		}
 	}
 
-
 	SetHealth(100.f);
-
-	FSkillData DashSkillData;
-	DashSkillData.Name = "Dash";
-	DashSkillData.Cooldown = 5.0f;
-	DashSkillData.SkillActions = NewObject<UDashComponent>(this);
-
-	FSkillData SmokeSkillData;
-	SmokeSkillData.Name = "Smoke";
-	SmokeSkillData.Cooldown = 5.0f;
-	SmokeSkillData.SkillActions = NewObject<USmokeComponent>(this);
-
-	AvailableSkills.Add(DashSkillData);
-	AvailableSkills.Add(SmokeSkillData);
 }
 
 //////////////////////////////////////////////////////////////////////////// Input
@@ -121,12 +107,20 @@ void AShooterGameTestCharacter::Look(const FInputActionValue& Value)
 
 void AShooterGameTestCharacter::TriggerDash()
 {
-	AvailableSkills[0].SkillActions->ExecuteSkill(this);
+	USkillActionComponent* DashComponent = GetOrCreateSkillComponent("Dash");
+	if (DashComponent)
+	{
+		DashComponent->ExecuteSkill(this);
+	}
 }
 
 void AShooterGameTestCharacter::TriggerSmoke()
 {
-	AvailableSkills[1].SkillActions->ExecuteSkill(this);
+	USkillActionComponent* SmokeComponent = GetOrCreateSkillComponent("Smoke");
+	if (SmokeComponent)
+	{
+		SmokeComponent->ExecuteSkill(this);
+	}
 }
 
 void AShooterGameTestCharacter::SetHasRifle(bool bNewHasRifle)

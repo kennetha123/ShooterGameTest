@@ -2,19 +2,10 @@
 
 #include "CoreMinimal.h"
 #include "Components/ActorComponent.h"
+#include "SkillData.h"
 #include "SkillActionComponent.generated.h"
 
 class AShooterGameTestCharacterBase;
-
-UCLASS(Blueprintable)
-class UGameSkillData : public UDataAsset
-{
-	GENERATED_BODY()
-
-public:
-	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Skill")
-	UParticleSystem* SkillParticleSystem;
-};
 
 UCLASS( ClassGroup=(Custom), meta=(BlueprintSpawnableComponent) )
 class SHOOTERGAMETEST_API USkillActionComponent : public UActorComponent
@@ -30,7 +21,7 @@ public:
 	float Cooldown = 2.0f;
 
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Skill")
-	UGameSkillData* SkillData;
+	USkillDataAsset* SkillDataAsset;
 
 protected:
 	virtual void StartCooldownTimer();

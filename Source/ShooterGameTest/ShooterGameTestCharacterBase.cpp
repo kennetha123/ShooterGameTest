@@ -20,7 +20,6 @@ float AShooterGameTestCharacterBase::GetHealth() const
 	return 0.0f;
 }
 
-// Called when the game starts or when spawned
 void AShooterGameTestCharacterBase::BeginPlay()
 {
 	Super::BeginPlay();
@@ -53,6 +52,34 @@ void AShooterGameTestCharacterBase::SetHealth(float Health)
 	}
 
 	AttributeComponent->Health.SetCurrentValue(Health);
+}
 
+USkillActionComponent* AShooterGameTestCharacterBase::GetOrCreateSkillComponent(const FString& SkillName)
+{
+	TWeakObjectPtr<USkillActionComponent>* ComponentPtr = AvailableSkills.Find(SkillName);
+	if (ComponentPtr && ComponentPtr->IsValid())
+	{
+		return ComponentPtr->Get();
+	}
+	else
+	{
+		USkillActionComponent* NewSkill = nullptr;
 
+		if (SkillName == "Smoke")
+		{
+			NewSkill = NewObject<USmokeComponent>(this);
+		}
+		else if (SkillName == "Dash")
+		{
+			NewSkill = NewObject<UDashComponent>(this);
+		}
+
+		if (NewSkill)
+		{
+			NewSkill->RegisterComponent();
+			AvailableSkills.Add(SkillName, NewSkill);
+		}
+
+		return NewSkill;
+	}
 }

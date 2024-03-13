@@ -22,14 +22,15 @@ struct FSkillData
     float Cooldown;
 
     UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Skill")
-    TWeakObjectPtr<USkillActionComponent> SkillActions;
+    UParticleSystem* SkillParticleSystem;
 };
 
 UCLASS()
-class SHOOTERGAMETEST_API USkillItems : public UDataAsset
+class SHOOTERGAMETEST_API USkillDataAsset : public UDataAsset
 {
     GENERATED_BODY()
 
+public:
     UPROPERTY(EditAnywhere)
-    TArray<FSkillData> SkillItems;
+    TArray<FSkillData> SkillsData;
 };
