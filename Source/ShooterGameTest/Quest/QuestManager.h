@@ -5,17 +5,21 @@
 #include "CoreMinimal.h"
 #include "GameFramework/Actor.h"
 #include "QuestObjective.h"
-#include "QuestObserver.h"
 #include "QuestManager.generated.h"
 
 UCLASS()
-class SHOOTERGAMETEST_API AQuestManager : public AActor, public IQuestObserver
+class SHOOTERGAMETEST_API AQuestManager : public AActor
 {
 	GENERATED_BODY()
 	
 public:
+    virtual void BeginPlay() override;
+
     UPROPERTY(EditAnywhere)
     UQuestDataAsset* Quests;
 
-    virtual void OnEnemyKilled(AActor* Enemy) override;
+    UFUNCTION()
+    void OnEnemyKilled(AEnemyActorComponent* Enemy);
+    UFUNCTION()
+    void OnLocationReached(ADestinationObjective* Destination);
 };

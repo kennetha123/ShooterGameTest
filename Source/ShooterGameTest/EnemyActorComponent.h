@@ -5,7 +5,6 @@
 #include "CoreMinimal.h"
 #include "Components/ActorComponent.h"
 #include "ShooterGameTestCharacterBase.h"
-#include "Quest/QuestObserver.h"
 #include "EnemyActorComponent.generated.h"
 
 
@@ -18,13 +17,15 @@ public:
 	// Sets default values for this component's properties
 	AEnemyActorComponent();
 
+	DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnEnemyKilled, AEnemyActorComponent*, Enemy);
+	UPROPERTY(BlueprintAssignable, Category = "Events")
+	FOnEnemyKilled OnEnemyKilled;
+
 protected:
 	// Called when the game starts
-	virtual void BeginPlay() override;		
+	virtual void BeginPlay() override;
 
 	virtual void PostInitializeComponents() override;
-
-	TArray<IQuestObserver*> Observers;
 
 	virtual void OnCharacterDeath() override;
 };

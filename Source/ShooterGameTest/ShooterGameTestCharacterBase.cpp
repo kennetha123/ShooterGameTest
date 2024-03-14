@@ -49,12 +49,10 @@ void AShooterGameTestCharacterBase::OnCharacterDeath()
 
 void AShooterGameTestCharacterBase::SetHealth(float Health)
 {
-	if (!AttributeComponent.IsValid())
+	if (AttributeComponent.IsValid())
 	{
-		return;
+		AttributeComponent->Health.SetCurrentValue(Health);
 	}
-
-	AttributeComponent->Health.SetCurrentValue(Health);
 }
 
 USkillActionComponent* AShooterGameTestCharacterBase::GetOrCreateSkillComponent(const FString& SkillName)

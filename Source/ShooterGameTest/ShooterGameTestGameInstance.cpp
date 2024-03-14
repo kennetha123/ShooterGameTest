@@ -2,6 +2,7 @@
 
 
 #include "ShooterGameTestGameInstance.h"
+#include "Quest/DestinationObjective.h"
 
 void UShooterGameTestGameInstance::Init()
 {

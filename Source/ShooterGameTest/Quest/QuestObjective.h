@@ -14,6 +14,8 @@ enum class EObjectiveType : uint8
     ReachLocation UMETA(DisplayName = "Reach Location")
 };
 
+class ADestinationObjective;
+
 UCLASS(BlueprintType)
 class SHOOTERGAMETEST_API UQuestObjectiveDataAsset : public UDataAsset
 {
@@ -44,7 +46,7 @@ public:
 
     // For "Reach Location" objective
     UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Objective", meta = (EditCondition = "ObjectiveType == EObjectiveType::ReachLocation"))
-    TArray<FVector> Locations;
+    FName DestinationTag;
 
     UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Objective", meta = (EditCondition = "ObjectiveType == EObjectiveType::ReachLocation"))
     float LocationRadius;

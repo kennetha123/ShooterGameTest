@@ -6,7 +6,6 @@
 #include "Quest/QuestManager.h"
 #include <Kismet/GameplayStatics.h>
 
-// Sets default values for this component's properties
 AEnemyActorComponent::AEnemyActorComponent()
 {
 	Tags.Add("Enemy");
@@ -34,11 +33,5 @@ void AEnemyActorComponent::OnCharacterDeath()
 {
 	Super::OnCharacterDeath();
 
-	UShooterGameTestGameInstance* GameInstance = Cast<UShooterGameTestGameInstance>(UGameplayStatics::GetGameInstance(GetWorld()));
-
-	if (GameInstance && GameInstance->GetQuestManager())
-	{
-		UE_LOG(LogTemp, Log, TEXT("Test"));
-		GameInstance->GetQuestManager()->OnEnemyKilled(this);
-	}
+	OnEnemyKilled.Broadcast(this);
 }
