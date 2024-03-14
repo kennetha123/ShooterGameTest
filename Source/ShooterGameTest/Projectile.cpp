@@ -40,10 +40,14 @@ void AProjectile::OnOverlapBegin(UPrimitiveComponent* OverlappedComponent, AActo
 		if (Character)
 		{
 			Character->AttributeComponent->ApplyDamage(OtherActor, 50.0f);
+			UE_LOG(LogTemp, Log, TEXT("%s Health : %f"), *OtherActor->GetActorNameOrLabel(), Character->GetHealth());
+		}
+		else
+		{
+			UE_LOG(LogTemp, Warning, TEXT("Cast to AShooterGameTestCharacterBase failed."));
 		}
 
-		UE_LOG(LogTemp, Log, TEXT("%s Health : %f"), *OtherActor->GetActorNameOrLabel(), Character->GetHealth());
-		
+		UE_LOG(LogTemp, Log, TEXT("%s Health : %f"), *OtherActor->GetActorNameOrLabel(), Character->GetHealth());	
 	}
 }
 

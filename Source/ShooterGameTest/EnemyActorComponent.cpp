@@ -2,6 +2,9 @@
 
 
 #include "EnemyActorComponent.h"
+#include "ShooterGameTest/ShooterGameTestGameInstance.h"
+#include "Quest/QuestManager.h"
+#include <Kismet/GameplayStatics.h>
 
 // Sets default values for this component's properties
 AEnemyActorComponent::AEnemyActorComponent()
@@ -24,5 +27,18 @@ void AEnemyActorComponent::PostInitializeComponents()
 	if (AttributeComponent == nullptr)
 	{
 		AttributeComponent = NewObject<UAttributeComponent>(this, TEXT("AttributeSet"));
+	}
+}
+
+void AEnemyActorComponent::OnCharacterDeath()
+{
+	Super::OnCharacterDeath();
+
+	UShooterGameTestGameInstance* GameInstance = Cast<UShooterGameTestGameInstance>(UGameplayStatics::GetGameInstance(GetWorld()));
+
+	if (GameInstance && GameInstance->GetQuestManager())
+	{
+		UE_LOG(LogTemp, Log, TEXT("Test"));
+		GameInstance->GetQuestManager()->OnEnemyKilled(this);
 	}
 }

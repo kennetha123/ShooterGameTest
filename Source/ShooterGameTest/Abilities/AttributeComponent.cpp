@@ -8,7 +8,7 @@ void UAttributeComponent::ApplyDamage(AActor* Actor, float Amount)
 {
 	AShooterGameTestCharacterBase* Character = Cast<AShooterGameTestCharacterBase>(Actor);
 
-	float NewHealth = Character->GetHealth() - 50.0f;
+	float NewHealth = Character->GetHealth() - FMath::Max(Amount, 0.0f);
 	Character->SetHealth(FMath::Max(NewHealth, 0.0f));
 
 	if (!IsAlive())

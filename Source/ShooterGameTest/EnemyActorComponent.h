@@ -5,6 +5,7 @@
 #include "CoreMinimal.h"
 #include "Components/ActorComponent.h"
 #include "ShooterGameTestCharacterBase.h"
+#include "Quest/QuestObserver.h"
 #include "EnemyActorComponent.generated.h"
 
 
@@ -22,4 +23,8 @@ protected:
 	virtual void BeginPlay() override;		
 
 	virtual void PostInitializeComponents() override;
+
+	TArray<IQuestObserver*> Observers;
+
+	virtual void OnCharacterDeath() override;
 };

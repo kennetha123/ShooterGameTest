@@ -40,8 +40,7 @@ protected:
 	UAnimMontage* DeathMontage;
 
 	USkillActionComponent* GetOrCreateSkillComponent(const FString& SkillName);
-private:
-	UFUNCTION()
-	void OnCharacterDeath();
 
+	UFUNCTION()
+	virtual void OnCharacterDeath();
 };

@@ -6,18 +6,12 @@
 #include <EnhancedInputSubsystems.h>
 #include <EnhancedInputComponent.h>
 
-// Sets default values for this component's properties
 UGravityGun::UGravityGun()
 {
-	// Set this component to be initialized when the game starts, and to be ticked every frame.  You can turn these features
-	// off to improve performance if you don't need them.
 	PrimaryComponentTick.bCanEverTick = true;
-
-	// ...
 }
 
 
-// Called when the game starts
 void UGravityGun::BeginPlay()
 {
 	Super::BeginPlay();
@@ -41,9 +35,10 @@ void UGravityGun::BeginPlay()
 	}
 
 	PhysicsHandle = GetOwner()->FindComponentByClass<UPhysicsHandleComponent>();
+	
 	if (!PhysicsHandle)
 	{
-		UE_LOG(LogTemp, Log, TEXT("There is no Physics Handle!"));
+		UE_LOG(LogTemp, Error, TEXT("Gravity Gun Error: Physics Handle component is missing on %s."), *GetOwner()->GetName());
 	}
 }
 
@@ -97,8 +92,11 @@ void UGravityGun::Launch()
 	if (PhysicsHandle->GetGrabbedComponent() != nullptr)
 	{
 		UPrimitiveComponent* GrabbedComponent = PhysicsHandle->GetGrabbedComponent();
-		PhysicsHandle->ReleaseComponent();
-		GrabbedComponent->AddImpulse(GetRightVector() * LaunchForce, NAME_None, true);
+		if (GrabbedComponent)
+		{
+			PhysicsHandle->ReleaseComponent();
+			GrabbedComponent->AddImpulse(GetRightVector() * LaunchForce, NAME_None, true);
+		}
 	}
 }
 

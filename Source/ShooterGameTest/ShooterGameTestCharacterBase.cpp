@@ -33,13 +33,16 @@ void AShooterGameTestCharacterBase::BeginPlay()
 void AShooterGameTestCharacterBase::OnCharacterDeath()
 {
 	GetCapsuleComponent()->SetCollisionEnabled(ECollisionEnabled::NoCollision);
-	UE_LOG(LogTemp, Log, TEXT("Character Dead %s"), *GetOwner()->GetActorNameOrLabel());
+	
+	UE_LOG(LogTemp, Log, TEXT("Character Death: %s is now dead."), *GetOwner()->GetActorNameOrLabel());
+
 	if (DeathMontage)
 	{
 		PlayAnimMontage(DeathMontage);
 	}
 	else
 	{
+		UE_LOG(LogTemp, Log, TEXT("Character Death: %s is being destroyed due to lack of DeathMontage."), *GetOwner()->GetActorNameOrLabel());
 		Destroy();
 	}
 }
