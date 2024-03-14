@@ -18,7 +18,4 @@ public:
     UQuestDataAsset* Quests;
 
     virtual void OnEnemyKilled(AActor* Enemy) override;
-
-private:
-    int32 EnemyKillCount = 0;
 };
