@@ -1,48 +1,42 @@
-
 #include "QuestManager.h"
-#include "DestinationObjective.h"
+#include "DestinationActor.h"
 #include <Kismet/GameplayStatics.h>
 #include <ShooterGameTest/EnemyActorComponent.h>
+#include "KillEnemiesObjective.h"
+#include "DestinationObjective.h"
 
 void AQuestManager::BeginPlay()
 {
     Super::BeginPlay();
 
-    for (auto& Objective : Quests->Objectives)
+    if (QuestsData == nullptr && QuestsData->Objectives.Num() == 0)
     {
-        if (Objective->ObjectiveType == EObjectiveType::ReachLocation)
-        {
-            TArray<AActor*> FoundActors;
-            UGameplayStatics::GetAllActorsWithTag(GetWorld(), Objective->DestinationTag, FoundActors);
-            UE_LOG(LogTemp, Log, TEXT("Found reach location quest."));
+        UE_LOG(LogTemp, Error, TEXT("Error : Quest is empty!"));
+        return;
+    }
 
-            for (auto Actor : FoundActors)
-            {
-                UE_LOG(LogTemp, Log, TEXT("found."));
-                ADestinationObjective* DestinationActor = Cast<ADestinationObjective>(Actor);
-                if (DestinationActor)
-                {
-                    UE_LOG(LogTemp, Log, TEXT("bind."));
-                    DestinationActor->OnDestinationReached.AddDynamic(this, &AQuestManager::OnLocationReached);
-                }
-            }
+    for (auto& QuestData : QuestsData->Objectives)
+    {
+        UE_LOG(LogTemp, Log, TEXT("Iterate through quest"));
+
+        if (QuestData->ObjectiveType == EObjectiveType::ReachLocation)
+        {
+            UDestinationObjective* NewObjective = NewObject<UDestinationObjective>(this);
+
+            // this is really hacky, i know.. but for now to pass the function without having
+            // function pointer, I think this is the way to do it for now.
+            NewObjective->OnLocationReached.AddUObject(this, &AQuestManager::OnLocationReached);
+            NewObjective->Initialize(QuestData);
+            QuestsObjective.Add(NewObjective);
         }
-
-        if (Objective->ObjectiveType == EObjectiveType::KillEnemies)
+        else if (QuestData->ObjectiveType == EObjectiveType::KillEnemies)
         {
-            Objective->CurrentKillCount = 0;
+            UKillEnemiesObjective* NewObjective = NewObject<UKillEnemiesObjective>(this);
 
-            TArray<AActor*> FoundEnemies;
-            UGameplayStatics::GetAllActorsOfClass(GetWorld(), AEnemyActorComponent::StaticClass(), FoundEnemies);
+            NewObjective->OnEnemyKilled.AddUObject(this, &AQuestManager::OnEnemyKilled);
+            NewObjective->Initialize(QuestData);
+            QuestsObjective.Add(NewObjective);
 
-            for (AActor* Actor : FoundEnemies)
-            {
-                AEnemyActorComponent* EnemyActor = Cast<AEnemyActorComponent>(Actor);
-                if (EnemyActor)
-                {
-                    EnemyActor->OnEnemyKilled.AddDynamic(this, &AQuestManager::OnEnemyKilled);
-                }
-            }
         }
     }
 }
@@ -51,31 +45,66 @@ void AQuestManager::OnEnemyKilled(AEnemyActorComponent* Enemy)
 {
     UE_LOG(LogTemp, Log, TEXT("OnEnemyKilled"));
 
-    for (auto& Objective : Quests->Objectives)
+    for (UObject* Obj : QuestsObjective)
     {
-        if (Objective->ObjectiveType == EObjectiveType::KillEnemies)
+        if (!IsValid(Obj))
         {
-            Objective->IncrementKillCount();
-            UE_LOG(LogTemp, Log, TEXT("Quest : enemy remaining : %d / %d!"), Objective->CurrentKillCount, Objective->NumberOfEnemiesToKill);
+            UE_LOG(LogTemp, Warning, TEXT("Invalid object encountered in QuestsObjective."));
+            continue;
+        }
 
-            if (Objective->IsObjectiveComplete())
+        UKillEnemiesObjective* KillObjective = Cast<UKillEnemiesObjective>(Obj);
+        if (!KillObjective)
+        {
+            UE_LOG(LogTemp, Warning, TEXT("Object is not a UKillEnemiesObjective. Actual class: %s"), *Obj->GetClass()->GetName());
+            continue;
+        }
+
+        if (KillObjective)
+        {
+            KillObjective->UpdateProgress();
+
+            if (KillObjective->IsComplete())
             {
-                UE_LOG(LogTemp, Log, TEXT("Quest : %s has been completed!"), *Objective->Title);
+                UE_LOG(LogTemp, Log, TEXT("Quest : %s has been completed!"), *KillObjective->GetTitle());
+                Enemy->OnEnemyKilled.RemoveAll(Enemy);
             }
         }
     }
 }
 
-void AQuestManager::OnLocationReached(ADestinationObjective* Destination)
+void AQuestManager::OnLocationReached(ADestinationActor* Destination)
 {
-    for (auto& Objective : Quests->Objectives)
+    UE_LOG(LogTemp, Log, TEXT("OnLocationReached"));
+
+    // Loop through the quest objectives to find destination objectives
+    for (UObject* Obj : QuestsObjective)
     {
-        if (Objective->ObjectiveType == EObjectiveType::ReachLocation)
+        if (!IsValid(Obj))
         {
-            UE_LOG(LogTemp, Log, TEXT("Quest : %s has been completed!"), *Objective->Title);
+            UE_LOG(LogTemp, Warning, TEXT("Invalid object encountered in QuestsObjective."));
+            continue;
+        }
+
+        UDestinationObjective* DestinationObjective = Cast<UDestinationObjective>(Obj);
+        if (!DestinationObjective)
+        {
+            UE_LOG(LogTemp, Warning, TEXT("Object is not a DestinationObjective. Actual class: %s"), *Obj->GetClass()->GetName());
+            continue;
+        }
+
+        if (DestinationObjective)
+        {
+            DestinationObjective->UpdateProgress(Destination);
+
+            if (DestinationObjective->IsComplete())
+            {
+                UE_LOG(LogTemp, Log, TEXT("Quest : %s has been completed!"), *DestinationObjective->GetTitle());
+                Destination->OnDestinationReached.RemoveAll(Destination);
+                Destination->Destroy();
+
+            }
         }
     }
 
-    Destination->OnDestinationReached.RemoveAll(Destination);
-    Destination->Destroy();
 }

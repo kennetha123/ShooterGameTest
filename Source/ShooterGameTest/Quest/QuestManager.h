@@ -1,10 +1,9 @@
-// Fill out your copyright notice in the Description page of Project Settings.
-
 #pragma once
 
 #include "CoreMinimal.h"
 #include "GameFramework/Actor.h"
 #include "QuestObjective.h"
+#include "QuestObjectiveInterface.h"
 #include "QuestManager.generated.h"
 
 UCLASS()
@@ -16,10 +15,11 @@ public:
     virtual void BeginPlay() override;
 
     UPROPERTY(EditAnywhere)
-    UQuestDataAsset* Quests;
+    UQuestDataAsset* QuestsData;
+    TArray<UObject*> QuestsObjective;
 
     UFUNCTION()
     void OnEnemyKilled(AEnemyActorComponent* Enemy);
     UFUNCTION()
-    void OnLocationReached(ADestinationObjective* Destination);
+    void OnLocationReached(ADestinationActor* Destination);
 };

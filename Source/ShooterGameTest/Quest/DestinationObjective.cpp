@@ -1,25 +1,56 @@
 #include "DestinationObjective.h"
-#include "ShooterGameTest/ShooterGameTestCharacter.h"
+#include "QuestObjective.h"
+#include <Kismet/GameplayStatics.h>
+#include "DestinationActor.h"
 
-ADestinationObjective::ADestinationObjective()
+void UDestinationObjective::Initialize(UQuestObjectiveDataAsset* ObjectiveData)
 {
-	PrimaryActorTick.bCanEverTick = true;
+    ObjectiveDataAsset = ObjectiveData;
 
-	CollisionComponent = CreateDefaultSubobject<UBoxComponent>(TEXT("CollisionComponent"));
-	RootComponent = CollisionComponent;
+    TArray<AActor*> FoundActors;
+    UGameplayStatics::GetAllActorsWithTag(GetWorld(), ObjectiveDataAsset->DestinationTag, FoundActors);
+    UE_LOG(LogTemp, Log, TEXT("Found reach location quest."));
 
-	CollisionComponent->OnComponentBeginOverlap.AddDynamic(this, &ADestinationObjective::OnOverlapBegin);
+    for (auto Actor : FoundActors)
+    {
+        UE_LOG(LogTemp, Log, TEXT("found."));
+        ADestinationActor* DestinationActor = Cast<ADestinationActor>(Actor);
+        if (DestinationActor)
+        {
+            UE_LOG(LogTemp, Log, TEXT("bind."));
+            if (OnLocationReached.IsBound())
+            {
+                DestinationActor->OnDestinationReached = OnLocationReached;
+            }
+            else
+            {
+                UE_LOG(LogTemp, Warning, TEXT("Need to initialize OnLocationReached first before call Initialize function!"));
+            }
+        }
+    }
 }
 
-void ADestinationObjective::BeginPlay()
+void UDestinationObjective::UpdateProgress(AActor* Actor)
 {
-	Super::BeginPlay();
+    if (!Actor || bIsComplete)
+    {
+        return;
+    }
+
+    bIsComplete = true;
 }
 
-void ADestinationObjective::OnOverlapBegin(UPrimitiveComponent* OverlappedComp, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult)
+bool UDestinationObjective::IsComplete() const
 {
-	if (OtherActor && OtherActor->IsA(AShooterGameTestCharacter::StaticClass()))
-	{
-		OnDestinationReached.Broadcast(this);
-	}
+    return bIsComplete;
+}
+
+FString UDestinationObjective::GetTitle() const
+{
+    return ObjectiveDataAsset->Title;
+}
+
+FString UDestinationObjective::GetDescription() const
+{
+    return ObjectiveDataAsset->Description;
 }

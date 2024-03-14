@@ -17,8 +17,7 @@ public:
 	// Sets default values for this component's properties
 	AEnemyActorComponent();
 
-	DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnEnemyKilled, AEnemyActorComponent*, Enemy);
-	UPROPERTY(BlueprintAssignable, Category = "Events")
+	DECLARE_MULTICAST_DELEGATE_OneParam(FOnEnemyKilled, AEnemyActorComponent*);
 	FOnEnemyKilled OnEnemyKilled;
 
 protected:

@@ -31,25 +31,13 @@ public:
     UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Objective")
     EObjectiveType ObjectiveType;
 
-    UFUNCTION(BlueprintCallable, Category = "Objective")
-    bool IsObjectiveComplete() const;
-
     // For "Kill Enemies" objective
     UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Objective", meta = (EditCondition = "ObjectiveType == EObjectiveType::KillEnemies"))
     int32 NumberOfEnemiesToKill;
 
-    UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = "Objective")
-    int32 CurrentKillCount;
-
-    UFUNCTION(BlueprintCallable, Category = "Objective")
-    void IncrementKillCount();
-
     // For "Reach Location" objective
     UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Objective", meta = (EditCondition = "ObjectiveType == EObjectiveType::ReachLocation"))
     FName DestinationTag;
-
-    UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Objective", meta = (EditCondition = "ObjectiveType == EObjectiveType::ReachLocation"))
-    float LocationRadius;
 };
 
 UCLASS(BlueprintType)

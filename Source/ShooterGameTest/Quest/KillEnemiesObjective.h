@@ -2,20 +2,19 @@
 
 #include "CoreMinimal.h"
 #include "QuestObjectiveInterface.h"
-#include "DestinationObjective.generated.h"
+#include "KillEnemiesObjective.generated.h"
 
-
+class AEnemyActorComponent;
 class UQuestObjectiveDataAsset;
-class ADestinationActor;
 
 UCLASS(Blueprintable)
-class SHOOTERGAMETEST_API UDestinationObjective : public UObject, public IQuestObjectiveInterface
+class SHOOTERGAMETEST_API UKillEnemiesObjective : public UObject, public IQuestObjectiveInterface
 {
     GENERATED_BODY()
 
 public:
-    DECLARE_MULTICAST_DELEGATE_OneParam(FOnLocationReached, ADestinationActor*);
-    FOnLocationReached OnLocationReached;
+    DECLARE_MULTICAST_DELEGATE_OneParam(FOnEnemyKilled, AEnemyActorComponent*);
+    FOnEnemyKilled OnEnemyKilled;
 
     void Initialize(UQuestObjectiveDataAsset* ObjectiveData);
     virtual void UpdateProgress(AActor* Actor = nullptr) override;
@@ -27,6 +26,6 @@ public:
 private:
     UQuestObjectiveDataAsset* ObjectiveDataAsset;
 
-    bool bIsComplete;
+    int CurrentKillCount = 0;
 };
 
